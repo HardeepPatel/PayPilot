@@ -99,6 +99,8 @@ To stay faithful to the original design, we preserve the same file structure and
   - Accepts or reverts changes  
 - Logs all runs to `result.csv`
 
+---
+
 ### 📁 Project Structure
 
 ```
@@ -109,6 +111,33 @@ To stay faithful to the original design, we preserve the same file structure and
 ├── launch.py       # optimization loop
 ├── result.csv      # iteration logs
 ```
+
+---
+
+## 📊 Evaluation Metrics
+
+Instead of `$val_bpb`, the target function maximizes a **UI layout score** based on concrete UX parameters:
+
+- **Task Success**  
+  Ensures critical workflows (refunds, payouts, disputes) are always completable.  
+  Guaranteed only if safety guardrails pass.
+
+- **Speed**  
+  Measures how quickly users can access critical features.  
+  Rewards placing `P0` elements (Refunds, Failed Payments, Payout Status) in top zones.
+
+- **Priority Alignment**  
+  Rewards correct placement of features:
+  - `P0` → top row / action bar  
+  - `P1` → first screen  
+  - Penalizes hidden or misplaced items  
+
+- **Discoverability (Clutter Penalty)**  
+  Penalizes overcrowded primary UI.  
+  Strongly penalizes placing `P3` (rare/admin tools) in top-level zones.
+
+- **Safety** (**Hard Guardrail**)  
+  Failing to expose `P0` features correctly **invalidates the run immediately** (`REJECT_UNSAFE`).
 
 ---
 
@@ -149,6 +178,23 @@ python launch.py
 
 - `train.py` → best layout found  
 - `result.csv` → full optimization history  
+
+---
+
+## 🖼️ UI Optimization Outcome
+
+Running `launch.py` creates a continuous optimization loop that:
+
+- Explores multiple layout variations  
+- Rejects unsafe configurations  
+- Retains only layouts that improve UX score  
+- Converges toward an optimal, safe dashboard structure  
+
+The final result represents a **high-quality layout configuration** that satisfies both usability and payment safety constraints.
+
+![Optimized Dashboard Layout](mockup.png)
+
+*Example outcome: `Refund Queue` and `Payout Status` are placed in top-level zones (`top_first_row`, `top_action_bar`), ensuring maximum visibility and fast access for critical workflows.*
 
 ---
 
